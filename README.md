@@ -16,8 +16,8 @@ thanks to Traceur.
   var result = match(someValue, function(case_) {
     case_('foo', () => 'You got foo');
     case_('bar', () => 'You got bar');
-    case_(match.typeOf('string'), () => 'You got some other string ' + s);
-    case_(match.typeOf('number'), () => 'You got number ' + n);
+    case_(match.typeOf('string'), () => 'You got some other string ' + someValue);
+    case_(match.typeOf('number'), () => 'You got number ' + someValue);
     case_(match.instanceOf(FooClass), () => 'You got an instance of FooClass');
     case_(match.ANY, () => 'You got something else');
   });
