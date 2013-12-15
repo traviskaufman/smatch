@@ -1,0 +1,20 @@
+{
+  "name": "smatch",
+  "version": "0.0.0",
+  "description": "Scala-style pattern matching for Javascript",
+  "main": "lib/smatch.js",
+  "scripts": {
+    "pretest": "./node_modules/.bin/jshint test/ src/",
+    "test": "./node_modules/.bin/mocha --reporter list --require test/init test/*.spec.js"
+  },
+  "repository": "",
+  "author": "Travis Kaufman <travis.kaufman@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "~1.8.1",
+    "mocha": "~1.15.1",
+    "sinon": "~1.7.3",
+    "traceur": "0.0.8",
+    "jshint": "~2.3.0"
+  }
+}

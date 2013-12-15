@@ -1,0 +1,5 @@
+{
+  "esnext": true,
+  "maxlen": 80,
+  "maxstatements": 30
+}
