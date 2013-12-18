@@ -56,11 +56,40 @@ describe('smatch', function() {
       assert.strictEqual(m, 'correct');
     });
 
+    it('can take any function as a matcher', function() {
+      var m = match('foo', function(case_) {
+        case_((v) => (v.indexOf('fo') >= 0), () => 'correct');
+        case_(match.ANY, () => 'WRONG');
+      });
+
+      assert.strictEqual(m, 'correct');
+    });
+
   });
 
-  describe('Arrays', function() {
+  describe('matching complex objects', function() {
 
-    it('deeply matches arrays', function() {
+    it('will partially match objects by default', function() {
+      var obj = {
+        foo: 1,
+        bar: 2,
+        baz: {
+          a: 3,
+          b: 'hello',
+          c: {
+            blah: 5
+          }
+        }
+      };
+      var m = match(obj, function(case_) {
+        case_({foo: 1, baz: {c: {blah: 5}}}, () => 'correct');
+        case_(match.ANY, () => 'WRONG');
+      });
+
+      assert.strictEqual(m, 'correct');
+    });
+
+    it('deeply matches using match.exactly()', function() {
       var a = [1, 2, {buckleMy: 'shoe'}];
       var copy = JSON.parse(JSON.stringify(a));
       var m = match(a, function(case_) {
@@ -71,7 +100,7 @@ describe('smatch', function() {
       assert.strictEqual(m, 'works');
     });
 
-    it('can extract variables from arrays', function() {
+    it('can extract variables', function() {
       var a = [1, 2, 3];
       var spy = sinon.spy();
 
@@ -82,7 +111,7 @@ describe('smatch', function() {
       sinon.assert.calledWithExactly(spy, 2, 3);
     });
 
-    it('can extract deeply nested variables from arrays', function() {
+    it('can extract deeply nested variables', function() {
       var a = ['wow', 'much matching', {
         a: {
           b: {
@@ -105,7 +134,7 @@ describe('smatch', function() {
       sinon.assert.calledWithExactly(spy, 'such nesting', 'wow');
     });
 
-    it('will not incorrectly partially match arrays', function() {
+    it('will not incorrectly partially match them', function() {
       var spy = sinon.spy();
       match([0, 1, 2], function(case_) {
         case_([1, '$0', '$1'], spy);
@@ -115,5 +144,4 @@ describe('smatch', function() {
     });
 
   });
-
 });
