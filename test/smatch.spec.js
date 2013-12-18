@@ -27,7 +27,7 @@ describe('smatch', function() {
     it("cascades down the case_ calls", function() {
       assert.strictEqual(matchFn('baz'), 'You got some other string: baz');
     });
-  
+
     it('matches on types other than ones with direct ' +
        'values specified', function() {
       assert.strictEqual(matchFn(25), 'You got number 25');
@@ -54,7 +54,7 @@ describe('smatch', function() {
       });
 
       assert.strictEqual(m, 'correct');
-    }); 
+    });
 
   });
 
@@ -78,7 +78,7 @@ describe('smatch', function() {
       match(a, function(case_) {
         case_([1, '$0', '$1'], spy);
       });
-      
+
       sinon.assert.calledWithExactly(spy, 2, 3);
     });
 
@@ -103,6 +103,15 @@ describe('smatch', function() {
       });
 
       sinon.assert.calledWithExactly(spy, 'such nesting', 'wow');
+    });
+
+    it('will not incorrectly partially match arrays', function() {
+      var spy = sinon.spy();
+      match([0, 1, 2], function(case_) {
+        case_([1, '$0', '$1'], spy);
+      });
+
+      sinon.assert.notCalled(spy);
     });
 
   });
