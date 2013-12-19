@@ -1,5 +1,7 @@
 {
+  "strict": true,
   "esnext": true,
   "maxlen": 80,
-  "maxstatements": 30
+  "maxstatements": 30,
+  "newcap": false
 }
