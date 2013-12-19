@@ -32,7 +32,7 @@ thanks to Traceur.
 match(someArray, function(case_) {
   case_([1, 2, {buckleMy: 'shoe'}], () => 'The array example Travis always uses');
   case_(
-    ['1', '$0', '$1'], 
+    ['1', '$0', '$1'],
     (item2, item3) => 'Array with 1 as first el, ' +
                       'followed by ' + item2 +
                       ' and ' + item3
@@ -55,8 +55,8 @@ match(someArray, function(case_) {
     case_({foo: 1}, () => 'Has "foo" property with value 1'
     case_({foo: '$0'}, (fooValue) => 'Object w/ foo value of ' + fooValue);
     case_({foo: {
-      bar: { 
-        baz: '$0' 
+      bar: {
+        baz: '$0'
       },
       bling: '$1'
     }, (nested, top) => 'foo.bar.baz = ' + nested + '. bling = ' + top);
