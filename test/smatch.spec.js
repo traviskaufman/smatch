@@ -1,6 +1,7 @@
 var match = require(BASE_DIR + '/src/smatch');
 
 describe('smatch', function() {
+  'use strict';
 
   describe('simple matching', function() {
     function FooClass() {}
@@ -69,8 +70,11 @@ describe('smatch', function() {
 
   describe('matching complex objects', function() {
 
-    it('will partially match objects by default', function() {
-      var obj = {
+    var spy, obj, arr;
+
+    beforeEach(function() {
+      spy = sinon.spy();
+      obj = {
         foo: 1,
         bar: 2,
         baz: {
@@ -81,6 +85,10 @@ describe('smatch', function() {
           }
         }
       };
+      arr = [1, 2, {buckleMy: 'shoe'}];
+    });
+
+    it('will partially match objects by default', function() {
       var m = match(obj, function(case_) {
         case_({foo: 1, baz: {c: {blah: 5}}}, () => 'correct');
         case_(match.ANY, () => 'WRONG');
@@ -90,9 +98,8 @@ describe('smatch', function() {
     });
 
     it('deeply matches using match.exactly()', function() {
-      var a = [1, 2, {buckleMy: 'shoe'}];
-      var copy = JSON.parse(JSON.stringify(a));
-      var m = match(a, function(case_) {
+      var copy = JSON.parse(JSON.stringify(arr));
+      var m = match(arr, function(case_) {
         case_(match.exactly(copy), () => 'works');
         case_(match.ANY, () => 'WRONG');
       });
@@ -101,18 +108,18 @@ describe('smatch', function() {
     });
 
     it('can extract variables', function() {
-      var a = [1, 2, 3];
-      var spy = sinon.spy();
-
-      match(a, function(case_) {
+      match(arr, function(case_) {
         case_([1, '$0', '$1'], spy);
       });
 
-      sinon.assert.calledWithExactly(spy, 2, 3);
+      // Assert spy called with last two elements of arr
+      sinon.assert.calledWithExactly.apply(
+        sinon.assert, [spy].concat(arr.slice(1))
+      );
     });
 
     it('can extract deeply nested variables', function() {
-      var a = ['wow', 'much matching', {
+      arr = ['wow', 'much matching', {
         a: {
           b: {
             c: {
@@ -125,9 +132,8 @@ describe('smatch', function() {
         },
         bing: 13
       }];
-      var spy = sinon.spy();
 
-      match(a, function(case_) {
+      match(arr, function(case_) {
         case_(['$1', 'much matching', {a: {b: {c: {d: '$0'}}}}], spy);
       });
 
@@ -135,12 +141,34 @@ describe('smatch', function() {
     });
 
     it('will not incorrectly partially match them', function() {
-      var spy = sinon.spy();
-      match([0, 1, 2], function(case_) {
-        case_([1, '$0', '$1'], spy);
+      match(arr, function(case_) {
+        case_([0, '$0', '$1'], spy);
       });
 
       sinon.assert.notCalled(spy);
+    });
+
+    describe('matching literal /\\$\\d+/ characters', function() {
+
+      beforeEach(function() {
+        obj = {a: '$1', b: 2};
+      });
+
+      it('uses match.raw() to accomplish this', function() {
+        match(obj, function(case_) {
+          case_({a: match.raw('$1')}, spy);
+        });
+
+        sinon.assert.called(spy);
+      });
+
+      it('will not incorrectly match "$" chars with match.raw()', function() {
+        match(obj, function(case_) {
+          case_({a: match.raw('$0')}, spy);
+        });
+
+        sinon.assert.notCalled(spy);
+      });
     });
 
   });
