@@ -9,56 +9,22 @@
 (function(global) {
   'use strict';
 
-  /** @see {@link match#MISS} */
-  var MISS = Symbol('match miss');
-  /** @see {@link match#ANY} */
-  var ANY = Symbol('wildcard');
-
   /**
-   * Used to indicate whether or not this match should be an extraction or not.
+   * Create a symbol if available. If not, create a null object. If
+   * Object.create isnt available, create a plain old object.
    *
-   * @constant {Symbol}
+   * @returns {Symbol} Could be an object, but treated as a symbol.
    * @private
    */
-  var EXTRACTION = Symbol();
+  var mkSymbol = function() {
+    if (typeof Symbol == 'function') {
+      return Symbol();
+    }
 
-  /**
-   * Used as a property to indicate that a string literal matching an extract
-   * token ("$1", for example) should not be treated as an extract token but as
-   * a literal string.
-   *
-   * @see {@link match#raw}
-   * @constant {Symbol}
-   * @private
-   */
-  var RAW = Symbol();
-
-  /**
-   * List of primitive types as strings, excluding null.
-   *
-   * @constant {Array.<string>}
-   * @private
-   */
-  var PRIMITIVES = ['undefined', 'number', 'boolean', 'string'];
-
-  /**
-   * List of `[[Class]]`es of ES built-in objects, excluding global and exotic
-   * objects. Basically any objects that you can call valueOf() on to get their
-   * values, instead of enumerating through them.
-   *
-   * @constant {Array.<string>}
-   * @private
-   */
-  var BUILTINS = ['Number', 'String', 'Date', 'RegExp', 'Boolean'];
-
-  /**
-   * This is the token used to tell match to extract whatever value it finds at
-   * this position and pass it to the case_ callback function.
-   *
-   * @constant {RegExp}
-   * @private
-   */
-  var EXTRACT_TOKEN = /^\$(\d+)$/;
+    var o = (typeof Object.create == 'function') ? Object.create(null) : {};
+    o.toString = () => ['#', '__sym_', Date.now(), '__'].join('');
+    return o;
+  };
 
   /**
    * Checks whether or not a given value is a primitive.
@@ -90,6 +56,33 @@
   var hasOwn = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
 
   /**
+   * Object.keys polyfill.
+   *
+   * @see {@link http://mzl.la/1i8gYXC}
+   * @private
+   */
+  var keys = function(obj) {
+    var res, key;
+
+    if (!isObject(obj)) {
+      throw new Error('(keys) obj must be an object.');
+    }
+
+    if (typeof Object.keys == 'function') {
+      return Object.keys(obj);
+    }
+
+    res = [];
+    for (key in obj) {
+      if (hasOwn(obj, key)) {
+        res.push(key);
+      }
+    }
+
+    return res;
+  };
+
+  /**
    * Used to set the final result from a call to match(). Used internally by
    * the case_() function. Will only set the result if it hasn't already been
    * set.
@@ -117,6 +110,56 @@
    * @private
    */
   var klass = (obj) => Object.prototype.toString.call(obj).substring(8, -1);
+  /** @see {@link match#MISS} */
+  var MISS = mkSymbol();
+  /** @see {@link match#ANY} */
+  var ANY = mkSymbol();
+
+  /**
+   * Used to indicate whether or not this match should be an extraction or not.
+   *
+   * @constant {Symbol}
+   * @private
+   */
+  var EXTRACTION = mkSymbol();
+
+  /**
+   * Used as a property to indicate that a string literal matching an extract
+   * token ("$1", for example) should not be treated as an extract token but as
+   * a literal string.
+   *
+   * @see {@link match#raw}
+   * @constant {Symbol}
+   * @private
+   */
+  var RAW = mkSymbol();
+
+  /**
+   * List of primitive types as strings, excluding null.
+   *
+   * @constant {Array.<string>}
+   * @private
+   */
+  var PRIMITIVES = ['undefined', 'number', 'boolean', 'string'];
+
+  /**
+   * List of `[[Class]]`es of ES built-in objects, excluding global and exotic
+   * objects. Basically any objects that you can call valueOf() on to get their
+   * values, instead of enumerating through them.
+   *
+   * @constant {Array.<string>}
+   * @private
+   */
+  var BUILTINS = ['Number', 'String', 'Date', 'RegExp', 'Boolean'];
+
+  /**
+   * This is the token used to tell match to extract whatever value it finds at
+   * this position and pass it to the case_ callback function.
+   *
+   * @constant {RegExp}
+   * @private
+   */
+  var EXTRACT_TOKEN = /^\$(\d+)$/;
 
   /**
    * Given a string, will return the value representing the position in which
@@ -222,7 +265,7 @@
       return o1.valueOf() === o2.valueOf();
     }
 
-    if (Object.keys(o1).length != Object.keys(o2).length) {
+    if (keys(o1).length != keys(o2).length) {
       return false;
     }
 
