@@ -1,3 +1,11 @@
+/**
+ * smatch - A scala-style pattern-matching utility for javascript.
+ *
+ * @author Travis Kaufman <travis.kaufman@gmail.com>
+ * @copyright 2013 Travis Kaufman
+ * @license MIT
+ */
+
 (function(global) {
   'use strict';
 
