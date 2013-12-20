@@ -66,6 +66,34 @@ describe('smatch', function() {
       assert.strictEqual(m, 'correct');
     });
 
+    it('concisely matches multiple values with match.oneOf()', function() {
+      var m = match(3, function(case_) {
+        case_(match.oneOf('foo', 'bar', 3), () => 'correct');
+        case_(match.ANY, () => 'WRONG');
+      });
+
+      assert.strictEqual(m, 'correct');
+    });
+
+    it('will not match with oneOf() if not included in arguments', function() {
+      var m = match('1', function(case_) {
+        case_(match.oneOf('2', 1), () => 'WRONG');
+        case_(match.ANY, () => 'correct');
+      });
+
+      assert.strictEqual(m, 'correct');
+    });
+
+    it('matches objects by identity with oneOf()', function() {
+      var o = {};
+      var m = match(o, function(case_) {
+        case_(match.oneOf(1, 2, o), () => 'correct');
+        case_(match.ANY, () => 'WRONG');
+      });
+
+      assert.strictEqual(m, 'correct');
+    });
+
     it('can take any function as a matcher', function() {
       var m = match('foo', function(case_) {
         case_((v) => (v.indexOf('fo') >= 0), () => 'correct');

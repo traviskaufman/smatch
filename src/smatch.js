@@ -373,10 +373,23 @@
   match.exactly = (obj) => (v) => deepEqual(obj, v);
 
   /**
+   * Returns a function that, when given a value, checks to make sure that
+   * value is found within the given arguments specified.
+   *
+   * @param {...*} list - One or more positional arguments to check for
+   *  inclusion.
+   * @returns {Function} A function that when given a value will return true if
+   *  the value is found within that list.
+   * @memberof match
+   * @public
+   */
+  match.oneOf = (...list) => (v) => ~list.indexOf(v);
+
+  /**
    * Sentinel value that's returned from a `match()` call _only_ when no match
    * has been found for the given value in that function.
    *
-   * @type {Symbol}
+   * @constant {Symbol}
    * @memberof match
    * @public
    */
@@ -388,7 +401,7 @@
    * will catch any value that hasn't already been matched. It is equivalent to
    * scala's wildcard matcher (`_`).
    *
-   * @type {Symbol}
+   * @constant {Symbol}
    * @memberof match
    * @public
    */
