@@ -4,8 +4,8 @@
   "description": "Scala-style pattern matching for Javascript",
   "main": "lib/smatch.js",
   "scripts": {
-    "pretest": "./node_modules/.bin/jshint test/ src/",
-    "test": "./node_modules/.bin/mocha --reporter list --require test/init test/*.spec.js"
+    "pretest": "grunt jshint",
+    "test": "grunt mochaTest"
   },
   "repository": "",
   "author": "Travis Kaufman <travis.kaufman@gmail.com>",
@@ -14,7 +14,12 @@
     "chai": "~1.8.1",
     "mocha": "~1.15.1",
     "sinon": "~1.7.3",
-    "traceur": "0.0.8",
-    "jshint": "~2.3.0"
+    "grunt": "~0.4.2",
+    "grunt-traceur": "git://github.com/aaronfrost/grunt-traceur#6d3882cc1d34a6f10d2383981e3a06a17d6f7a12",
+    "grunt-contrib-jshint": "~0.7.2",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-mocha-test": "~0.8.1",
+    "jshint": "~2.3.0",
+    "traceur": "0.0.9"
   }
 }
