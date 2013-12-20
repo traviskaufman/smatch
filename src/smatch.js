@@ -298,8 +298,11 @@
 
   /**
    * Returns a function that tests whether or not a given object is of a certain
-   * type. Simply uses `typeof` under the hood, so things like `null` will
-   * match for functions returned by `typeOf('object')`.
+   * type. Note that this function is smart enough not to match `null` with
+   * `typeof` value of 'object'. If you want to check that something is a null
+   * type, use `match.typeOf('null')`, which was going to be standard in ES6
+   * but got rejected because too much pre-existing code is relying on this
+   * quirk :(.
    *
    * @param {string} typeStr - The 'type' string.
    * @returns {Function} A function that accepts an object and tests whether or
@@ -310,8 +313,8 @@
   match.typeOf = (typeStr) => function(v) {
     var t = typeof v;
     // TODO: what's the best way to handle this?
-    if (t == 'object' && v === null) {
-      return '';
+    if (v === null) {
+      return typeStr === 'null';
     }
 
     return t === typeStr;

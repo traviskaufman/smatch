@@ -57,6 +57,15 @@ describe('smatch', function() {
       assert.strictEqual(m, 'correct');
     });
 
+    it('matches against null with match.typeOf("null")', function() {
+      var m = match(null, function(case_) {
+        case_(match.typeOf('null'), () => 'correct');
+        case_(match.ANY, () => 'WRONG');
+      });
+
+      assert.strictEqual(m, 'correct');
+    });
+
     it('can take any function as a matcher', function() {
       var m = match('foo', function(case_) {
         case_((v) => (v.indexOf('fo') >= 0), () => 'correct');
