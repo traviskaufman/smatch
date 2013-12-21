@@ -156,6 +156,23 @@ describe('smatch', function() {
       );
     });
 
+    it('disregards prototypes when using match.exactly()', function() {
+      var F = function(foo) {
+        this.foo = foo;
+      };
+      var f = new F(1);
+      var m;
+
+      F.prototype.bar = 'bar';
+
+      m = match(f, function(case_) {
+        case_(match.exactly({foo: 1}), () => 'correct');
+        case_(match.ANY, () => 'WRONG');
+      });
+
+      assert.strictEqual(m, 'correct');
+    });
+
     it('can extract deeply nested variables', function() {
       arr = ['wow', 'much matching', {
         a: {
