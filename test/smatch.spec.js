@@ -1,6 +1,7 @@
-var match = require(BASE_DIR + '/src/smatch');
+var match = require(BASE_DIR + '/lib/smatch');
 
 describe('smatch', function() {
+  /* jshint esnext: true */
   'use strict';
 
   describe('simple matching', function() {

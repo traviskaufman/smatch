@@ -3,17 +3,6 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    // Traceur Build
-    traceur: {
-      options: {
-        experimental: true
-      },
-      custom: {
-        files: {
-          'lib/smatch.js': ['src/smatch.js']
-        }
-      }
-    },
     // !jshint all code
     jshint: {
       options: {
@@ -50,8 +39,7 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-traceur');
   grunt.loadNpmTasks('grunt-mocha-test');
 
-  grunt.registerTask('build', ['jshint', 'mochaTest', 'traceur', 'uglify']);
+  grunt.registerTask('build', ['jshint', 'mochaTest', 'uglify']);
 };

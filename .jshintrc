@@ -1,7 +1,8 @@
 {
   "strict": true,
-  "esnext": true,
+  "es3": true,
   "maxlen": 80,
   "maxstatements": 30,
-  "newcap": false
+  "newcap": false,
+  "trailing": true
 }
