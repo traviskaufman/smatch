@@ -2,7 +2,6 @@
   "strict": true,
   "es3": true,
   "maxlen": 80,
-  "maxstatements": 30,
   "newcap": false,
   "trailing": true
 }
