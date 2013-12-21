@@ -63,14 +63,14 @@ match(someArray, function(case_) {
   });
 ```
 
-## Matching Actual dollar signs (NOT IMPLEMENTED YET)
+## Matching Actual dollar signs
 ```javascript
   match('$0', function(case_) {
     case_(match.raw('$0'), () => 'Special char input');
   });
 ```
 
-## Concise Matching (NOT IMPLEMENTED YET)
+## Concise Matching
 ```javascript
   match(someString, function(case_) {
     case_(match.oneOf('foo', 'bar', 'baz'), (value) => 'One of foo, bar, or ' +
