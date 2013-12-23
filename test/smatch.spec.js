@@ -226,5 +226,71 @@ describe('smatch', function() {
       });
     });
 
-  });
-});
+    describe('matching primtive wrappers and dates', function() {
+      /* jshint -W053 */
+      var DATE_TIME = Date.now();
+      var number = new Number(1),
+          string = new String('foo'),
+          bool = new Boolean(true),
+          date = new Date(DATE_TIME);
+      
+      function test(obj, type, right, wrong) {
+        console.log('testing', obj);
+        it('matches ' + type + ' objects using valueOf()', function() {
+
+          match(obj, function(case_) {
+            case_(right, spy);
+          });
+
+          sinon.assert.called(spy);
+        });
+
+        it('doesn\'t match ' + type + ' objects of a different value',
+           function() {
+          match(obj, function(case_) {
+            case_(wrong, spy);
+          });
+
+          sinon.assert.notCalled(spy);
+        });
+      }
+
+      test(number, 'number', new Number(1), new Number(2));
+      test(string, 'string', new String('foo'), new String('bar'));
+      test(bool, 'boolean', new Boolean(true), new Boolean(false));
+      test(date, 'date', new Date(DATE_TIME), new Date(DATE_TIME + 10000));
+    });
+
+    describe('matching regex', function() {
+      var re;
+
+      beforeEach(function() {
+        re = /[a-z\d]+/i;
+      });
+
+      it('matches if the source and flags are the same', function() {
+        match(re, function(case_) {
+          case_(/[a-z\d]+/i, spy);
+        });
+
+        sinon.assert.called(spy);
+      });
+
+      it('won\'t match if source is same but flags are different', function() {
+        match(re, function(case_) {
+          case_(/[a-z\d]+/gi, spy);
+        });
+
+        sinon.assert.notCalled(spy);
+      });
+
+      it('won\'t match if flags are same but source is different', function() {
+        match(re, function(case_) {
+          case_(/(?:[a-f\d]{3}){1,2}/i, spy);
+        });
+
+        sinon.assert.notCalled(spy);
+      });
+    }); // Matching regex
+  }); // Matching objects
+}); // smatch
