@@ -104,6 +104,14 @@ describe('smatch', function() {
       assert.strictEqual(m, 'correct');
     });
 
+    it('matches anything with match.ANY', function() {
+      var m = match('hello', function(case_) {
+        case_(match.ANY, () => 'yup');
+      });
+
+      assert.strictEqual(m, 'yup');
+    });
+
   });
 
   describe('matching complex objects', function() {
@@ -235,7 +243,6 @@ describe('smatch', function() {
           date = new Date(DATE_TIME);
       
       function test(obj, type, right, wrong) {
-        console.log('testing', obj);
         it('matches ' + type + ' objects using valueOf()', function() {
 
           match(obj, function(case_) {
