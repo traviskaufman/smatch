@@ -112,6 +112,15 @@ describe('smatch', function() {
       assert.strictEqual(m, 'yup');
     });
 
+    it('correctly matches NaN', function() {
+      var m = match(NaN, function(case_) {
+        case_(NaN, () => 'correct');
+        case_(match.ANY, () => 'wrong');
+      });
+
+      assert.strictEqual(m, 'correct');
+    });
+
   });
 
   describe('matching complex objects', function() {
