@@ -159,9 +159,9 @@ function printTweets(tweets) {
   			screen_name: '$1',
   		},
   		text: '$2'
- 	}, (user, sn, text) => $(
- 		['<p>', user, '(@' + sn + '), '-', text, '</p>'].join(' ')
- 	));
+    }, (user, sn, text) => $(
+      ['<p>', user, '(@' + sn + ')', '-', text, '</p>'].join(' ')
+    ));
   })).filter((result) => result !== match.MISS);
   
   $('#tweets').append(tweet$Els);
