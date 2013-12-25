@@ -439,6 +439,66 @@ describe('smatch', function() {
         assert.isFalse(match.exactly(objects.date)(objects.date.getTime()));
       });
 
+      it('returns true if two numbers are equal', function() {
+        assert.isTrue(match.exactly(objects.num)(copies.num));
+      });
+
+      it('returns false if two numbers are not equal', function() {
+        assert.isFalse(match.exactly(objects.num)(-Infinity));
+      });
+
+      it('returns false for number -> number object', function() {
+        assert.isFalse(match.exactly(objects.num)(new Number(objects.num)));
+      });
+
+      it('returns true if two strings are equal', function() {
+        assert.isTrue(match.exactly(objects.str)(copies.str));
+      });
+
+      it('returns false if two strings are not equal', function() {
+        assert.isFalse(match.exactly(objects.str)('bzzzzzzz'));
+      });
+
+      it('returns false for string -> string object', function() {
+        assert.isFalse(match.exactly(objects.str)(new String(objects.str)));
+      });
+
+      it('returns true if two boolean are equal', function() {
+        assert.isTrue(match.exactly(objects.bool)(copies.bool));
+      });
+
+      it('returns false if two boolean are not equal', function() {
+        assert.isFalse(match.exactly(objects.bool)('bzzzzzzz'));
+      });
+
+      it('returns false for boolean -> boolean object', function() {
+        assert.isFalse(match.exactly(objects.bool)(new Boolean(objects.bool)));
+      });
+
+      it('returns true for null -> null', function() {
+        assert.isTrue(match.exactly(null)(null));
+      });
+
+      it('returns false for null -> anything not null', function() {
+        assert.isFalse(match.exactly(null)(undefined));
+      });
+
+      it('returns true for undefined -> undefined', function() {
+        assert.isTrue(match.exactly(undefined)(undefined));
+      });
+
+      it('returns false for undefined -> anything not undefined', function() {
+        assert.isFalse(match.exactly(undefined)('foo'));
+      });
+
+      it('returns true for NaN -> NaN', function() {
+        assert.isTrue(match.exactly(NaN)(NaN));
+      });
+
+      it('returns false for NaN -> anything not NaN', function() {
+        assert.isFalse(match.exactly(NaN)(2));
+      });
+
     });
   }); // helper functions
 }); // smatch
