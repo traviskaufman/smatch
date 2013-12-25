@@ -1,7 +1,9 @@
+/* jshint esnext: true */
+
 var match = require(BASE_DIR + '/lib/smatch');
+var { clone } = require('cyclonejs');
 
 describe('smatch', function() {
-  /* jshint esnext: true */
   'use strict';
 
   describe('simple matching', function() {
@@ -309,4 +311,134 @@ describe('smatch', function() {
       });
     }); // Matching regex
   }); // Matching objects
+
+  describe('helper functions', function() {
+
+    describe('#exactly', function() {
+      /* jshint -W053 */
+      var objects, copies;
+      var DATE_TIME = Date.now();
+
+      beforeEach(function() {
+        objects = {
+          plain: {foo: 1, bar: 2, baz: 3},
+          nested: {foo: 1, bar: 2, baz: {bing: {bang: 3}}},
+          array: [1, 2, 3],
+          nestedArray: [1, 2, {buckleMy: 'shoe'}],
+          regex: /foo/i,
+          wrappedNum: new Number(1),
+          wrappedStr: new String('hey'),
+          wrappedBool: new Boolean(true),
+          date: new Date(DATE_TIME),
+          num: 1,
+          str: 'hey',
+          bool: true,
+          nullValue: null,
+          undefinedValue: undefined,
+          nanValue: NaN
+        };
+
+        copies = Object.keys(objects).reduce(function(mem, key) {
+          mem[key] = clone(objects[key]);
+          return mem;
+        }, {});
+      });
+
+      it('returns a function', function() {
+        assert.isFunction(match.exactly({}));
+      });
+
+      it('returns true if two objects are the same', function() {
+        assert.isTrue(match.exactly(objects.plain)(copies.plain));
+      });
+
+      it('returns false if two objects are different', function() {
+        copies.plain.baz = {};
+        assert.isFalse(match.exactly(objects.plain)(copies.plain));
+      });
+
+      it('returns true if two nested objects are the same', function() {
+        assert.isTrue(match.exactly(objects.nested)(copies.nested));
+      });
+
+      it('returns false if two nested objects are different', function() {
+        copies.nested.baz = {};
+        assert.isFalse(match.exactly(objects.nested)(copies.nested));
+      });
+
+      it('returns true if two arrays are the same', function() {
+        assert.isTrue(match.exactly(objects.array)(copies.array));
+      });
+
+      it('returns false if two arrays are different', function() {
+        copies.array[3] = 'yo';
+        assert.isFalse(match.exactly(objects.array)(copies.array));
+      });
+
+      it('returns true if two nested arrays are the same', function() {
+        assert.isTrue(match.exactly(objects.nestedArray)(copies.nestedArray));
+      });
+
+      it('returns false if two nested arrays are different', function() {
+        copies.nestedArray[2].buckleMy = 'something';
+        assert.isFalse(match.exactly(objects.nestedArray)(copies.nestedArray));
+      });
+
+      it('returns true if a regex\'s source and flags match', function() {
+        assert.isTrue(match.exactly(objects.regex)(copies.regex));
+      });
+
+      it('returns false if a regex\'s source doesn\'t match', function() {
+        copies.regex = /notthesame/i;
+        assert.isFalse(match.exactly(objects.regex)(copies.regex));
+      });
+
+      it('returns false if a regex\'s flags don\'t match', function() {
+        copies.regex = new RegExp(objects.regex.source, 'm');
+        assert.isFalse(match.exactly(objects.regex)(copies.regex));
+      });
+
+      it('returns true if two number objects hold the same value', function() {
+        assert.isTrue(match.exactly(objects.wrappedNum)(copies.wrappedNum));
+      });
+
+      it('returns false if two nbr objects have different values', function() {
+        copies.wrappedNum = new Number(objects.wrappedNum.valueOf() + 1);
+        assert.isFalse(match.exactly(objects.wrappedNum)(copies.wrappedNum));
+      });
+
+      it('returns true if two string objects hold the same value', function() {
+        assert.isTrue(match.exactly(objects.wrappedStr)(copies.wrappedStr));
+      });
+
+      it('returns false if two str objects have different values', function() {
+        copies.wrappedStr = new String(objects.wrappedStr.valueOf() + 'a');
+        assert.isFalse(match.exactly(objects.wrappedStr)(copies.wrappedStr));
+      });
+
+      it('returns true if two boolean objects hold the same value', function() {
+        assert.isTrue(match.exactly(objects.wrappedBool)(copies.wrappedBool));
+      });
+
+      it('returns false if two bool objects have different values', function() {
+        copies.wrappedBool = new Boolean(!objects.wrappedNum.valueOf());
+        assert.isFalse(match.exactly(objects.wrappedBool)(copies.wrappedBool));
+      });
+
+      it('returns true if two Date objects are equal', function() {
+        assert.isTrue(match.exactly(objects.date)(copies.date));
+      });
+
+      it('returns false if two Date objects differ', function() {
+        copies.date = new Date(objects.date.getTime() + 10000);
+        assert.isFalse(match.exactly(objects.date)(copies.date));
+      });
+
+      it('returns false if a date object is compared against ' +
+         'an equivalent timestamp', function() {
+        assert.isFalse(match.exactly(objects.date)(objects.date.getTime()));
+      });
+
+    });
+  }); // helper functions
 }); // smatch

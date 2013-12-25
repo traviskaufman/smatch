@@ -19,6 +19,7 @@
     "grunt-contrib-uglify": "~0.2.7",
     "grunt-mocha-test": "~0.8.1",
     "jshint": "~2.3.0",
-    "traceur": "0.0.9"
+    "traceur": "0.0.9",
+    "cyclonejs": "~1.0.0"
   }
 }
