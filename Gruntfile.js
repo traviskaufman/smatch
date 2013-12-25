@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     // Mocha tests
     mochaTest: {
       options: {
-        reporter: 'list',
+        reporter: 'dot',
         require: ['test/init'],
         mocha: require('mocha')
       },
