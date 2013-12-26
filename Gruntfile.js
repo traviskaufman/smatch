@@ -31,8 +31,10 @@ module.exports = function(grunt) {
                  '* @version <%= pkg.version %>\n' +
                  '*/\n'
       },
-      files: {
-        'dist/smatch.min.js': ['lib/smatch.js']
+      smatch: {
+        files: {
+          'dist/smatch.min.js': ['lib/smatch.js']
+        }
       }
     }
   });
