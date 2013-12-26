@@ -205,7 +205,7 @@ Returns a function that deeply compares the value passed to `match()` against `o
 
 #### match.raw(_v_)
 
-Returns a function that compares the exact identity of _v_ to the value passed to `match()`, and if they're the same it will be considered a match. This function is useful for testing for object identity, and for matching against strings that would otherwise be considered extract tokens, such as US currency:
+Returns an object that, when it encounters it, tells smatch to use the exact identity of _v_ to the value passed to `match()`, and if they're the same it will be considered a match. This function is useful for testing for object identity, and for matching against strings that would otherwise be considered extract tokens, such as US currency:
 
 ```javascript
 match(nycBarPrices, function(case_) {
@@ -217,6 +217,13 @@ match(nycBarPrices, function(case_) {
 	case_((v) => parseInt(v.slice(1), 10) > 50), () => "You're a tool");
 });
 ```
+
+`match.raw()` can also be used inside of objects:
+
+```javascript
+match(prices, function(case_) {
+  case_([match.raw('$3'), match.raw('$4')], () => 'Cheap');
+});
 
 #### match.oneOf(_…list_)
 
