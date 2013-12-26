@@ -501,4 +501,5 @@ describe('smatch', function() {
 
     });
   }); // helper functions
+
 }); // smatch
