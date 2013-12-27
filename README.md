@@ -224,6 +224,7 @@ match(nycBarPrices, function(case_) {
 match(prices, function(case_) {
   case_([match.raw('$3'), match.raw('$4')], () => 'Cheap');
 });
+```
 
 #### match.oneOf(_…list_)
 
