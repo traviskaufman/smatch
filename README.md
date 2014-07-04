@@ -14,6 +14,23 @@ to better readability and maintainability.
 smatch is built to work in all ES5-compatible environments, and tries to
 make use of any ES6 features when possible.
 
+## Table of Contents
+
+- [Installation](#user-content-installation)
+- [Usage](#user-content-usage)
+  - [Simple Example](#user-content-simple-example)
+    - [How it works](#user-content-how-it-works)
+  - [Matching Objects](#user-content-matching-objects)
+    - [Property Extraction](#user-content-property-extraction)
+  - [Writing your own functions for case_](#user-content-writing-your-own-functions-for-case_)
+  - [Built-in match helper functions](#user-content-built-in-match-helper-functions)
+    - [match.typeOf(typeStr)](#user-content-matchtypeoftypestr)
+    - [match.instanceOf(ctor)](#user-content-matchinstanceofctor)
+    - [match.exactly(obj)](#user-content-matchexactlyobj)
+    - [match.raw(v)](#user-content-matchrawv)
+    - [match.oneOf(…list)](#user-content-matchoneoflist)
+- [License](#user-content-license)
+
 ## Installation
 Installation can be done via npm
 
