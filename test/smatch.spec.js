@@ -13,6 +13,7 @@ describe('smatch', function() {
       return match(v, function(case_) {
         case_('foo', () => 'You got foo');
         case_('bar', () => 'You got bar');
+        case_('literal', 'You got a literal');
         case_(match.typeOf('string'), () => 'You got some other string: ' + v);
         case_(match.typeOf('number'), () => 'You got number ' + v);
         case_(match.instanceOf(FooClass), () => 'Instance of FooClass');
@@ -43,6 +44,11 @@ describe('smatch', function() {
 
     it('allows for wildcard matching', function() {
       assert.strictEqual(matchFn(null), 'You got something else');
+    });
+
+    it('allows you to specify literal values as the return value ' +
+       'for a match', function() {
+      assert.strictEqual(matchFn('literal'), 'You got a literal');
     });
 
     it('returns match.MISS if no match is found', function() {
@@ -252,7 +258,7 @@ describe('smatch', function() {
           string = new String('foo'),
           bool = new Boolean(true),
           date = new Date(DATE_TIME);
-      
+
       function test(obj, type, right, wrong) {
         it('matches ' + type + ' objects using valueOf()', function() {
 

@@ -11,10 +11,8 @@ complex and/or verbose conditional logic that's normally needed to check
 objects. This allows you to clearly specify the intent of your program, leading
 to better readability and maintainability.
 
-smatch is built to work in every environment possible. It tries to make use of
-ES5 (and some ES6) features when available, but always falls back to plain ES3
-when those features are unavailable. It can be used with CommonJS, AMD, or
-plain old vanilla JS environments.
+smatch is built to work in all ES5-compatible environments, and tries to
+make use of any ES6 features when possible.
 
 ## Installation
 Installation can be done via npm
@@ -33,7 +31,7 @@ Node/CommonJS:
 
 ```javascript
 var match = require('smatch');
-// use match ...		
+// use match ...
 ```
 
 AMD/RequireJS:
@@ -63,12 +61,12 @@ statements can be used in place of these._
 
 ```javascript
 var myMatchFn = (someValue) => match(someValue, function(case_) {
-	case_('foo', () => 'You got foo');
-	case_('bar', () => 'You got bar');
-	case_(match.typeOf('string'), () => 'You got some other string ' + someValue);
-	case_(match.typeOf('number'), () => 'You got number ' + someValue);
-	case_(match.instanceOf(Date), () => 'You got a Date');
-	case_(match.ANY, () => 'You got something else');
+	case_('foo', 'You got foo');
+	case_('bar', 'You got bar');
+	case_(match.typeOf('string'), 'You got some other string ' + someValue);
+	case_(match.typeOf('number'), 'You got number ' + someValue);
+	case_(match.instanceOf(Date), 'You got a Date');
+	case_(match.ANY, 'You got something else');
 });
 
 console.log(myMatchFn('foo')); // => 'You got foo'
@@ -86,7 +84,12 @@ second argument that takes one variable, which is itself a function as is used
 to emulate scala's `case` statement, hence why it's called `case_` both
 internally and in these docs.
 
-As soon as a `case_` statement is matched against, the return value from the corresponding function in the second argument to a `case_` statement is returned to the caller of `match`. `case_` functions, much like the `case` statement, cascade from top to bottom, so if the callback for the first `case_` function where the first argument is matched against will be invoked, and that value will be returned. 
+As soon as a `case_` statement is matched against, it looks at the second argument to the statement and takes the following actions:
+
+* If the argument is not a function, that value is returned to the caller of `match`.
+* If the argument _is_ a function, the return value from invoking that function is returned to the caller of `match`.
+
+`case_` functions, much like the `case` statement, cascade from top to bottom, so if the callback for the first `case_` function where the first argument is matched against will be invoked, and that value will be returned.
 
 The `case_` function works in the following way:
 
@@ -98,7 +101,7 @@ If there are no matches found, `match.MISS` will be returned. `match.MISS` is a 
 
 ```javascript
 var m = match('hey', function(case_) {
-	case_('foo', () => 'blah');
+	case_('foo', 'blah');
 });
 console.log(m === match.MISS); // => true
 ```
@@ -116,11 +119,11 @@ The following example demonstrates this:
 ```javascript
 var someObject = {foo: 'bar', baz: 1, bing: {bang: 'boom'}};
 var m = match(someObject, function(case_) {
-	case_({foo: 'bar'}, () => 'Some object with property foo = "bar"');
-	case_(match.ANY, () => 'Something else');
+	case_({foo: 'bar'}, 'Some object with property foo = "bar"');
+	case_(match.ANY, 'Something else');
 });
 
-console.log(m); // => 'Some object with property foo = 'bar' 
+console.log(m); // => 'Some object with property foo = 'bar'
 ```
 
 #### Property Extraction
@@ -163,7 +166,7 @@ function printTweets(tweets) {
       ['<p>', user, '(@' + sn + ')', '-', text, '</p>'].join(' ')
     ));
   })).filter((result) => result !== match.MISS);
-  
+
   $('#tweets').append(tweet$Els);
 }
 ```
@@ -175,14 +178,14 @@ As described above, if `case_` encounters a function as its first argument, it w
 ```javascript
 function oddEvenPartition(numbers) {
   var [odds, evens] = [[], []];
-  
+
   numbers.forEach(function(n) {
   	match(n, function(case_) {
   		case_((n) => n % 2 === 0, () => evens.push(n));
   		case_(match.ANY, () => odds.push(n));
   	});
-  });  
-  
+  });
+
   return [odds, evens];
 }
 ```
@@ -193,7 +196,7 @@ While it's easy to write your own matching functions, `match` ships with a numbe
 
 #### match.typeOf(_typeStr_)
 
-Returns a function that will call `typeof` on the value passed to `match()`, and if the returned result matches `typeStr`, it'll be considered a match, _except_ in the case of `null`. `match.typeOf` knows that `null` is _not_ an object, so `null` won't match for `match.typeOf('object')`. To match null type, use `match.typeOf('null')`. 
+Returns a function that will call `typeof` on the value passed to `match()`, and if the returned result matches `typeStr`, it'll be considered a match, _except_ in the case of `null`. `match.typeOf` knows that `null` is _not_ an object, so `null` won't match for `match.typeOf('object')`. To match null type, use `match.typeOf('null')`.
 
 #### match.instanceOf(_ctor_)
 
@@ -209,12 +212,12 @@ Returns an object that, when it encounters it, tells smatch to use the exact ide
 
 ```javascript
 match(nycBarPrices, function(case_) {
-	case_(match.raw('$5'), () => 'PBR/Natty/Keystone');
-	case_(match.raw('$7'), () => 'Well shot');
-	case_(match.raw('$12'), () => 'Call drink');
-	case_(match.raw('$20'), () => 'Premium');
-	case_(match.raw('$50'), () => 'Top Shelf');
-	case_((v) => parseInt(v.slice(1), 10) > 50), () => "You're a tool");
+	case_(match.raw('$5'), 'PBR/Natty/Keystone');
+	case_(match.raw('$7'), 'Well shot');
+	case_(match.raw('$12'), 'Call drink');
+	case_(match.raw('$20'), 'Premium');
+	case_(match.raw('$50'), 'Top Shelf');
+	case_((v) => parseInt(v.slice(1), 10) > 50), "You"re a tool');
 });
 ```
 
