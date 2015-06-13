@@ -1,13 +1,16 @@
 {
   "name": "smatch",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Scala-style pattern matching for Javascript",
   "main": "lib/smatch.js",
   "scripts": {
     "pretest": "grunt jshint",
     "test": "grunt mochaTest"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/traviskaufman/smatch"
+  },
   "author": "Travis Kaufman <travis.kaufman@gmail.com>",
   "license": "MIT",
   "devDependencies": {
